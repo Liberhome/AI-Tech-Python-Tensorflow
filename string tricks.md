@@ -1,4 +1,4 @@
-string tricks:
+
 
 1. 
 ``` python
