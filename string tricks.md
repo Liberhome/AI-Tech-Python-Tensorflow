@@ -44,3 +44,10 @@ print (message.lstrip())#Remove white space at the end of a string
 print (message.strip()) ##Remove white space both at the beginning of a string and at the end of a string
 
 ```
+****
+
+Prevent type errors：
+```python
+age=21
+
+```
