@@ -46,8 +46,9 @@ print (message.strip()) ##Remove white space both at the beginning of a string a
 ```
 ****
 
-Prevent type errors：
+Prevent type errors：use str()
 ```python
 age=21
-
+message="Happy"+str(age)+"rd BirthDay"
+print(message)
 ```
