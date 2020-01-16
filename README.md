@@ -12,4 +12,4 @@
 [Day02 Number](https://github.com/Liberhome/PythonCrashCourse/blob/master/Number)
 
 ****
-[Day03 Number](https://github.com/Liberhome/PythonCrashCourse/blob/master/List.md)
+[Day03 List](https://github.com/Liberhome/PythonCrashCourse/blob/master/List.md)
