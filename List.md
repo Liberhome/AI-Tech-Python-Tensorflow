@@ -24,12 +24,18 @@ Delete at anyplace
 del phones[0]
 print(phones[0].title())
 ```
-
+****
 
 ```python
-****
+
 Pop out & use it
 first_got=phones.pop(0)
 print(first_got.title())
+```
+****
+```python
+Remove （using when you only know what the element is without the imformation）
+phones.remove('vivo')
+print (phones)
 ```
 
