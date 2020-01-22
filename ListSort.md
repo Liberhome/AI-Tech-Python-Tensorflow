@@ -6,8 +6,9 @@ print (phones)
 ```
 
 ****
-```python 
 Sort AntiAlphabetically & Permanently
+
+```python 
 Reverse letter order：
 
 phones.sort(reverse=True)
@@ -27,3 +28,6 @@ print(sorted(phones))
 Temporary call reverse-sorted function without any change on the original sentence
 print (sorted(phones))
 ****
+
+
+
