@@ -13,3 +13,9 @@
 
 ****
 [Day03 List](https://github.com/Liberhome/PythonCrashCourse/blob/master/List.md)
+
+****
+[Day04 ListSort](https://github.com/Liberhome/PythonCrashCourse/blob/master/ListSort.md)
+
+****
+[Day05 ListSort](https://github.com/Liberhome/PythonCrashCourse/blob/master/List-Operation.md)
