@@ -1,11 +1,6 @@
 Operation of List
 
-For-Loop
 
-```python
-print every element in the list
-
-```
 
 ```python
 out of the loop:
@@ -24,3 +19,4 @@ print ('thx~~~~~~~~~~~~~~~~~~~~~~~~~~')
 for value in range(1,6):
     print (value)
 
+```
