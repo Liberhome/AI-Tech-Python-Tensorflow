@@ -15,7 +15,7 @@ print ('thx~~~~~~~~~~~~~~~~~~~~~~~~~~')
 ```
 
 ```python 
-# randomly print 1～5 
+#  print 1～5 
 for value in range(1,6):
     print (value)
 
