@@ -28,3 +28,10 @@ for value in range(1,11):
     apples.append(value**2)
 print (apples)
 
+```python
+# function particularly prepared for number list:
+digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0] 
+min(digits) 0 
+max(digits) 9 
+sum(digits) 45
+```
