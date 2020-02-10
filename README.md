@@ -19,3 +19,7 @@
 
 ****
 [Day05 ListSort](https://github.com/Liberhome/PythonCrashCourse/blob/master/List-Operation.md)
+
+****
+Keep Moving ,I will never know how strong I will be
+****
