@@ -23,3 +23,5 @@
 ****
 Keep Moving ,I will never know how strong I will be
 ****
+[Day06 ListOperation2](https://github.com/Liberhome/PythonCrashCourse/blob/master/ListOperation2.md)
+
