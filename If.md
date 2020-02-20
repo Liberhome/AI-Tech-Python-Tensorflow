@@ -25,4 +25,21 @@ for car in cars:
 print ('Maserati' in cars)
 #not in
 print ('Maseratia'not in cars)
+# if elif else
+ age = 12
+ if age < 4:       
+    print("Your admission cost is $0.") 
+ elif age < 18:       
+    print("Your admission cost is $5.") 
+ else:
+    print("Your admission cost is $10.")
+
+```
+
+```python
+cars=['Tesla','Maserati','Porsche']
+for car in cars:
+    print ("Adding " +car+".")
+
+print ("\n Finished making your car")
 ```
