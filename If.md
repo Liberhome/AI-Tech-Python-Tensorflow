@@ -43,3 +43,14 @@ for car in cars:
 
 print ("\n Finished making your car")
 ```
+****
+```python
+requested_toppings=[]
+if requested_toppings:
+    for requested_topping in requested_toppings:
+        print("Adding "+requested_topping+".")
+    print ('\n Finished making your pizza')
+else:
+    print ("Are you sure you want to a plain pizza?")
+
+```
