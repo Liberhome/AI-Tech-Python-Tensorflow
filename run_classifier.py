@@ -25,8 +25,7 @@ import modeling
 import optimization
 import tokenization
 import tensorflow as tf
-
-import horovod.tensorflow as hvd
+import pandas as pd
 
 flags = tf.flags
 
@@ -101,13 +100,18 @@ flags.DEFINE_integer("iterations_per_loop", 1000,
 
 flags.DEFINE_bool("use_tpu", False, "Whether to use TPU or GPU/CPU.")
 
-flags.DEFINE_bool("use_multi_gpu", False, "Use multiple GPUs for training "
-                                          "using Horovod.")
+flags.DEFINE_integer('trunc_medium',
+                        default=-2,
+                        help="choose the trunc ways, -2 means choose the first seq_len tokens, "
+                             "-1 means choose the last seq_len tokens, "
+                             "0 means choose the first (seq_len // 2) and the last(seq_len // 2). "
+                             "other positive numbers k mean the first k tokens "
+                             "and the last (seq_len - k) tokens")
 
 tf.flags.DEFINE_string(
     "tpu_name", None,
-    "The Cloud TPU to use for training. This should be either the name "
-    "used when creating the Cloud TPU, or a grpc://ip.address.of.tpu:8470 "
+    "The Cloud TPU to use "
+    " TPU, or a grpc://ip.address.of.tpu:8470 "
     "url.")
 
 tf.flags.DEFINE_string(
@@ -127,6 +131,7 @@ tf.flags.DEFINE_string("master", None, "[Optional] TensorFlow master URL.")
 flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
+
 
 
 class InputExample(object):
@@ -208,6 +213,210 @@ class DataProcessor(object):
         lines.append(line)
       return lines
 
+class AGNewsProcessor(DataProcessor):
+    """Processor for the AG data set."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        train_data = pd.read_csv(os.path.join(data_dir, "train.csv"),header=None).values
+        return self._create_examples(train_data, "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        dev_data = pd.read_csv(os.path.join(data_dir, "test.csv"),header=None).values
+        return self._create_examples(dev_data, "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ["1","2","3","4"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(line[1]+" - "+line[2])
+            label = tokenization.convert_to_unicode(str(line[0]))
+            if i%1000==0:
+                print(i)
+                print("guid=",guid)
+                print("text_a=",text_a)
+                print("label=",label)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
+
+class IMDBProcessor(DataProcessor):
+    """Processor for the IMDB data set."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        train_data = pd.read_csv(os.path.join(data_dir, "train.csv"),header=None,sep="\t").values
+        return self._create_examples(train_data, "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        dev_data = pd.read_csv(os.path.join(data_dir, "test.csv"),header=None,sep="\t").values
+        return self._create_examples(dev_data, "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ["0","1"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            #if i>147:break
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(str(line[1]))
+            label = tokenization.convert_to_unicode(str(line[0]))
+            if i%1000==0:
+                print(i)
+                print("guid=",guid)
+                print("text_a=",text_a)
+                print("label=",label)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
+
+class Yelp_p_Processor(DataProcessor):
+    """Processor for the Yelp2 data set."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        train_data = pd.read_csv(os.path.join(data_dir, "train.csv"),header=None,sep=",").values
+        return self._create_examples(train_data, "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        dev_data = pd.read_csv(os.path.join(data_dir, "test.csv"),header=None,sep=",").values
+        return self._create_examples(dev_data, "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ["1","2"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            #if i>147:break
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(str(line[1]))
+            label = tokenization.convert_to_unicode(str(line[0]))
+            if i%1000==0:
+                print(i)
+                print("guid=",guid)
+                print("text_a=",text_a)
+                print("label=",label)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
+
+
+class Yelp_f_Processor(DataProcessor):
+    """Processor for the Yelp5 data set."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        train_data = pd.read_csv(os.path.join(data_dir, "train.csv"),header=None,sep=",").values
+        return self._create_examples(train_data, "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        dev_data = pd.read_csv(os.path.join(data_dir, "test.csv"),header=None,sep=",").values
+        return self._create_examples(dev_data, "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ["1","2","3","4","5"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            #if i>147:break
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(str(line[1]))
+            label = tokenization.convert_to_unicode(str(line[0]))
+            if i%1000==0:
+                print(i)
+                print("guid=",guid)
+                print("text_a=",text_a)
+                print("label=",label)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
+
+class Dbpedia_Processor(DataProcessor):
+    """Processor for the Dbpedia data set."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        train_data = pd.read_csv(os.path.join(data_dir, "train.csv"),header=None,sep=",").values
+        return self._create_examples(train_data, "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        dev_data = pd.read_csv(os.path.join(data_dir, "test.csv"),header=None,sep=",").values
+        return self._create_examples(dev_data, "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14']
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(str(line[1])+" "+str(line[2]))
+            label = tokenization.convert_to_unicode(str(line[0]))
+            if i%1000==0:
+                print(i)
+                print("guid=",guid)
+                print("text_a=",text_a)
+                print("label=",label)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
+
+class Yahoo_Processor(DataProcessor):
+    """Processor for the IMDB data set."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        train_data = pd.read_csv(os.path.join(data_dir, "train.csv"),header=None,sep=",").values
+        return self._create_examples(train_data, "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        dev_data = pd.read_csv(os.path.join(data_dir, "test.csv"),header=None,sep=",").values
+        return self._create_examples(dev_data, "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ["1","2","3","4","5","6","7","8","9","10"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            #if i>147:break
+            guid = "%s-%s" % (set_type, i)
+            text_a = tokenization.convert_to_unicode(str(line[1])+" "+str(line[2]))
+            text_b = tokenization.convert_to_unicode(str(line[3]))
+            label = tokenization.convert_to_unicode(str(line[0]))
+            if i%1000==0:
+                print(i)
+                print("guid=",guid)
+                print("text_a=",text_a)
+                print("text_b=",text_b)
+                print("label=",label)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+        return examples
 
 class XnliProcessor(DataProcessor):
   """Processor for the XNLI data set."""
@@ -380,7 +589,7 @@ class ColaProcessor(DataProcessor):
 
 
 def convert_single_example(ex_index, example, label_list, max_seq_length,
-                           tokenizer):
+                           tokenizer,trunc_medium):
   """Converts a single `InputExample` into a single `InputFeatures`."""
 
   if isinstance(example, PaddingInputExample):
@@ -408,7 +617,14 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
   else:
     # Account for [CLS] and [SEP] with "- 2"
     if len(tokens_a) > max_seq_length - 2:
-      tokens_a = tokens_a[0:(max_seq_length - 2)]
+        if trunc_medium == -2:
+            tokens_a = tokens_a[0:(max_seq_length - 2)]
+        elif trunc_medium == -1:
+            tokens_a = tokens_a[-(max_seq_length - 2):]
+        elif trunc_medium == 0:
+            tokens_a = tokens_a[:(max_seq_length - 2) // 2] + tokens_a[-((max_seq_length - 2) // 2):]
+        elif trunc_medium > 0:
+            tokens_a = tokens_a[: trunc_medium] + tokens_a[(trunc_medium - max_seq_length + 2):]
 
   # The convention in BERT is:
   # (a) For sequence pairs:
@@ -482,7 +698,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
 
 
 def file_based_convert_examples_to_features(
-    examples, label_list, max_seq_length, tokenizer, output_file):
+    examples, label_list, max_seq_length, tokenizer, output_file,trunc_medium=-2):
   """Convert a set of `InputExample`s to a TFRecord file."""
 
   writer = tf.python_io.TFRecordWriter(output_file)
@@ -492,7 +708,7 @@ def file_based_convert_examples_to_features(
       tf.logging.info("Writing example %d of %d" % (ex_index, len(examples)))
 
     feature = convert_single_example(ex_index, example, label_list,
-                                     max_seq_length, tokenizer)
+                                     max_seq_length, tokenizer,trunc_medium)
 
     def create_int_feature(values):
       f = tf.train.Feature(int64_list=tf.train.Int64List(value=list(values)))
@@ -623,7 +839,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
 
 def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
-                     use_one_hot_embeddings, use_multi_gpu):
+                     use_one_hot_embeddings):
   """Returns `model_fn` closure for TPUEstimator."""
 
   def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
@@ -677,8 +893,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
     if mode == tf.estimator.ModeKeys.TRAIN:
 
       train_op = optimization.create_optimizer(
-          total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu,
-          use_multi_gpu)
+          total_loss, learning_rate, num_train_steps, num_warmup_steps, use_tpu)
 
       output_spec = tf.contrib.tpu.TPUEstimatorSpec(
           mode=mode,
@@ -771,7 +986,7 @@ def input_fn_builder(features, seq_length, is_training, drop_remainder):
 # This function is not used by this file but is still used by the Colab and
 # people who depend on it.
 def convert_examples_to_features(examples, label_list, max_seq_length,
-                                 tokenizer):
+                                 tokenizer,trunc_medium=-2):
   """Convert a set of `InputExample`s to a list of `InputFeatures`."""
 
   features = []
@@ -780,18 +995,13 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
       tf.logging.info("Writing example %d of %d" % (ex_index, len(examples)))
 
     feature = convert_single_example(ex_index, example, label_list,
-                                     max_seq_length, tokenizer)
+                                     max_seq_length, tokenizer,trunc_medium)
 
     features.append(feature)
   return features
 
 
 def main(_):
-  # Horovod: initialize Horovod if using multiple GPUs.
-  if FLAGS.use_multi_gpu:
-    hvd.init()
-    FLAGS.output_dir = FLAGS.output_dir if hvd.rank() == 0 else os.path.join(FLAGS.output_dir, str(hvd.rank()))
-
   tf.logging.set_verbosity(tf.logging.INFO)
 
   processors = {
@@ -799,6 +1009,12 @@ def main(_):
       "mnli": MnliProcessor,
       "mrpc": MrpcProcessor,
       "xnli": XnliProcessor,
+      "ag": AGNewsProcessor,
+      "imdb": IMDBProcessor,
+      "yelp_p": Yelp_p_Processor,
+      "yelp_f": Yelp_f_Processor,
+      "yahoo": Yahoo_Processor,
+      "dbpedia":Dbpedia_Processor,
   }
 
   tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
@@ -836,23 +1052,7 @@ def main(_):
         FLAGS.tpu_name, zone=FLAGS.tpu_zone, project=FLAGS.gcp_project)
 
   is_per_host = tf.contrib.tpu.InputPipelineConfig.PER_HOST_V2
-  if FLAGS.use_multi_gpu:
-    # Horovod: pin GPU to be used to process local rank (one GPU per process)
-    config = tf.ConfigProto()
-    config.gpu_options.visible_device_list = str(hvd.local_rank())
-    run_config = tf.contrib.tpu.RunConfig(
-      cluster=tpu_cluster_resolver,
-      master=FLAGS.master,
-      model_dir=FLAGS.output_dir,
-      save_checkpoints_steps=FLAGS.save_checkpoints_steps,
-      tpu_config=tf.contrib.tpu.TPUConfig(
-          iterations_per_loop=FLAGS.iterations_per_loop,
-          num_shards=FLAGS.num_tpu_cores,
-          per_host_input_for_training=is_per_host),
-      log_step_count_steps=25,
-      session_config=config)
-  else:
-    run_config = tf.contrib.tpu.RunConfig(
+  run_config = tf.contrib.tpu.RunConfig(
       cluster=tpu_cluster_resolver,
       master=FLAGS.master,
       model_dir=FLAGS.output_dir,
@@ -871,11 +1071,6 @@ def main(_):
         len(train_examples) / FLAGS.train_batch_size * FLAGS.num_train_epochs)
     num_warmup_steps = int(num_train_steps * FLAGS.warmup_proportion)
 
-    # Horovod: adjust number of steps based on number of GPUs.
-    if FLAGS.use_multi_gpu:
-      num_warmup_steps = num_warmup_steps // hvd.size()
-      num_train_steps = num_train_steps // hvd.size()
-
   model_fn = model_fn_builder(
       bert_config=bert_config,
       num_labels=len(label_list),
@@ -884,9 +1079,7 @@ def main(_):
       num_train_steps=num_train_steps,
       num_warmup_steps=num_warmup_steps,
       use_tpu=FLAGS.use_tpu,
-      use_one_hot_embeddings=FLAGS.use_tpu,
-      use_multi_gpu=FLAGS.use_multi_gpu
-  )
+      use_one_hot_embeddings=FLAGS.use_tpu)
 
   # If TPU is not available, this will fall back to normal Estimator on CPU
   # or GPU.
@@ -901,7 +1094,7 @@ def main(_):
   if FLAGS.do_train:
     train_file = os.path.join(FLAGS.output_dir, "train.tf_record")
     file_based_convert_examples_to_features(
-        train_examples, label_list, FLAGS.max_seq_length, tokenizer, train_file)
+        train_examples, label_list, FLAGS.max_seq_length, tokenizer, train_file,trunc_medium=FLAGS.trunc_medium)
     tf.logging.info("***** Running training *****")
     tf.logging.info("  Num examples = %d", len(train_examples))
     tf.logging.info("  Batch size = %d", FLAGS.train_batch_size)
@@ -911,18 +1104,7 @@ def main(_):
         seq_length=FLAGS.max_seq_length,
         is_training=True,
         drop_remainder=True)
-
-    # Horovod: In the case of multi GPU training with Horovod, adding
-    # hvd.BroadcastGlobalVariablesHook(0) hook, broadcasts the initial variable
-    # states from rank 0 to all other processes. This is necessary to ensure
-    # consistent initialization of all workers when training is started with
-    # random weights or restored from a checkpoint.
-    if FLAGS.use_multi_gpu:
-        hooks = [hvd.BroadcastGlobalVariablesHook(0)]
-    else:
-        hooks = []
-    estimator.train(input_fn=train_input_fn, max_steps=num_train_steps,
-                    hooks=hooks)
+    estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
 
   if FLAGS.do_eval:
     eval_examples = processor.get_dev_examples(FLAGS.data_dir)
@@ -938,7 +1120,7 @@ def main(_):
 
     eval_file = os.path.join(FLAGS.output_dir, "eval.tf_record")
     file_based_convert_examples_to_features(
-        eval_examples, label_list, FLAGS.max_seq_length, tokenizer, eval_file)
+        eval_examples, label_list, FLAGS.max_seq_length, tokenizer, eval_file,trunc_medium=FLAGS.trunc_medium)
 
     tf.logging.info("***** Running evaluation *****")
     tf.logging.info("  Num examples = %d (%d actual, %d padding)",
@@ -984,7 +1166,7 @@ def main(_):
     predict_file = os.path.join(FLAGS.output_dir, "predict.tf_record")
     file_based_convert_examples_to_features(predict_examples, label_list,
                                             FLAGS.max_seq_length, tokenizer,
-                                            predict_file)
+                                            predict_file,trunc_medium=FLAGS.trunc_medium)
 
     tf.logging.info("***** Running prediction*****")
     tf.logging.info("  Num examples = %d (%d actual, %d padding)",
