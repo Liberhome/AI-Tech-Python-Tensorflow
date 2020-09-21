@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage[fontset=ubuntu]{ctex}
+
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+\title{Reaction to Low-Rank Bottleneck in Multi-head Attention Models And Talking Heads Attention}
+\author{baihonglee}
+\date{September,21 2020}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction01:《Low-Rank Bottleneck in Multi-head Attention Models》}
+自《Attention is All You Need》一文发布后，基于Multi-Head Attention的Transformer模型开始流行起来，而去年发布的BERT模型更是将Transformer模型的热度推上了又一个高峰。当然，技术的探索是无止境的，改进的工作也相继涌现：有改进预训练任务的，比如XLNET的PLM、ALBERT的SOP等；有改进归一化的，比如Post-Norm向Pre-Norm的改变，以及T5中去掉了Layer Norm里边的beta参数等；也有改进模型结构的，比如Transformer-XL等；有改进训练方式的，比如ALBERT的参数共享等；...
+以上的这些改动，都是在Attention外部进行改动的，也就是说它们都默认了Attention的合理性，没有对Attention本身进行改动。而本文我们则介绍关于两个新结果：它们针对Multi-Head Attention中可能存在建模瓶颈，提出了不同的方案来改进Multi-Head Attention。两篇论文都来自Google，并且做了相当充分的实验，因此结果应该是相当有说服力的了。
+第一个结果来自文章《Low-Rank Bottleneck in Multi-head Attention Models》，它明确地指出了Multi-Head Attention里边的表达能力瓶颈，并提出通过增大keysize的方法来缓解这个瓶颈。
+
+\includegraphics[width = \linewidth]{images/what1.jpg}
+\includegraphics[width = \linewidth]{images/how.jpg}
+\includegraphics[width = \linewidth]{images/res.jpg}
+
+
+\section{Introduction02:《Talking-Heads Attention》}
+
+再缺也不能缺Talking
+对Multi-Head Attention改进的第二个结果来自论文《Talking-Heads Attention》，这篇论文虽然没有显式地指出它跟前一篇论文的联系，但笔者认为它们事实上在解决同一个问题，只不过思路不一样：它指出当前的Multi-Head Attention每个head的运算是相互孤立的，而通过将它们联系（Talking）起来，则可以得到更强的Attention设计，即标题的“Talking-Heads Attention”。
+
+\includegraphics[width = \linewidth]{images/how2.png}
+\includegraphics[width = \linewidth]{images/res2.png}
+
+
+\end{document}
